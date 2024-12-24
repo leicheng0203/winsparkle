@@ -703,7 +703,7 @@ void UpdateDialog::OnRunInstaller(wxCommandEvent&)
 
 bool UpdateDialog::RunInstaller()
 {
-    switch (ApplicationController::UserRunInstallerCallback(m_updateFile.t_str()))
+    switch (ApplicationController::UserRunInstallerCallback(m_updateFile.t_str(), m_installerArguments.c_str()))
     {
         case 0:
             // carry on with default handling
@@ -981,6 +981,8 @@ void UpdateDialog::StateUpdateDownloaded(const std::wstring& updateFile, const s
 
     m_updateFile = updateFile;
     m_installerArguments = installerArguments;
+    Settings::WriteConfigValue("UpdateFile", updateFile);
+    Settings::WriteConfigValue("InstallerArguments", installerArguments);
 
     if ( m_installAutomatically )
     {

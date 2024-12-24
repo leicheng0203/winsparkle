@@ -187,7 +187,7 @@ void __cdecl Settings::RegistryWrite(const char *name, const wchar_t *value, voi
     HKEY key;
     LONG result = RegCreateKeyExA
                   (
-                      HKEY_CURRENT_USER,
+                      HKEY_LOCAL_MACHINE,
                       subkey.c_str(),
                       0,
                       NULL,
@@ -223,7 +223,7 @@ void __cdecl Settings::RegistryDelete(const char *name, void *)
     HKEY key;
     LONG result = RegOpenKeyExA
                   (
-                      HKEY_CURRENT_USER,
+                      HKEY_LOCAL_MACHINE,
                       subkey.c_str(),
                       0,
                       KEY_SET_VALUE,
@@ -295,17 +295,7 @@ static int DoRegistryRead(HKEY root, const char *name, wchar_t *buf, size_t len)
 int __cdecl Settings::RegistryRead(const char *name, wchar_t *buf, size_t len, void *)
 {
     size_t bytes = len * sizeof(wchar_t);
-    // Try reading from HKCU first. If that fails, look at HKLM too, in case
-    // some settings have globally set values (either by the installer or the
-    // administrator).
-    if (DoRegistryRead(HKEY_CURRENT_USER, name, buf, bytes))
-    {
-        return 1;
-    }
-    else
-    {
-        return DoRegistryRead(HKEY_LOCAL_MACHINE, name, buf, bytes);
-    }
+    return DoRegistryRead(HKEY_LOCAL_MACHINE, name, buf, bytes);
 }
 
 namespace

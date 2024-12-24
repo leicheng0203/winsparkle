@@ -146,6 +146,7 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_appcast_url(const char *url)
     {
         CheckForInsecureURL(url, "appcast feed");
         Settings::SetAppcastURL(url);
+        Settings::WriteConfigValue("AppcastURL", url);
     }
     CATCH_ALL_EXCEPTIONS
 }
@@ -219,6 +220,15 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_config_methods(win_sparkle_config_m
     CATCH_ALL_EXCEPTIONS
 }
 
+WIN_SPARKLE_API void __cdecl win_sparkle_write_registry_value(const char* name, const char* value)
+{
+    try
+    {
+        Settings::WriteConfigValue(name, value);
+    }
+    CATCH_ALL_EXCEPTIONS
+}
+
 WIN_SPARKLE_API void __cdecl win_sparkle_set_automatic_check_for_updates(int state)
 {
     try
@@ -243,17 +253,12 @@ WIN_SPARKLE_API int __cdecl win_sparkle_get_automatic_check_for_updates()
 
 WIN_SPARKLE_API void __cdecl win_sparkle_set_update_check_interval(int interval)
 {
-    static const int MIN_CHECK_INTERVAL = 3600; // one hour
-
     try
     {
-        if ( interval < MIN_CHECK_INTERVAL )
+        if (interval > 0)
         {
-            winsparkle::LogError("Invalid update interval (min: 3600 seconds)");
-            interval = MIN_CHECK_INTERVAL;
+            Settings::WriteConfigValue("UpdateInterval", interval);
         }
-
-        Settings::WriteConfigValue("UpdateInterval", interval);
     }
     CATCH_ALL_EXCEPTIONS
 }

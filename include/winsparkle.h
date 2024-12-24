@@ -305,6 +305,13 @@ typedef struct win_sparkle_config_methods_tag {
 WIN_SPARKLE_API void __cdecl win_sparkle_set_config_methods(win_sparkle_config_methods_t *config_methods);
 
 /**
+    Writes given value to registry under this name.
+
+    @param  name for value and value data
+ */
+WIN_SPARKLE_API void __cdecl win_sparkle_write_registry_value(const char* name, const char* value);
+
+/**
     Sets whether updates are checked automatically or only through a manual call.
 
     If disabled, win_sparkle_check_update_with_ui() must be used explicitly.
@@ -518,7 +525,7 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_update_dismissed_callback(win_spark
 
 
 /// Callback type for win_sparkle_user_run_installer_callback()
-typedef int(__cdecl* win_sparkle_user_run_installer_callback_t)(const wchar_t *);
+typedef int(__cdecl* win_sparkle_user_run_installer_callback_t)(const wchar_t *, const char*);
 
 /**
     Set callback to be called when the update payload is
