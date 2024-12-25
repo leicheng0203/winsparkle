@@ -71,13 +71,13 @@ void ApplicationController::RequestShutdown()
     // nothing yet
 }
 
-void ApplicationController::NotifyUpdateError()
+void ApplicationController::NotifyUpdateError(int error_code, const char* error_message)
 {
     {
         CriticalSectionLocker lock(ms_csVars);
         if ( ms_cbError )
         {
-            (*ms_cbError)();
+            (*ms_cbError)(error_code, error_message);
             return;
         }
     }

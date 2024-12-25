@@ -75,7 +75,7 @@ public:
         (i.e. the user is manually checking for updates), "update error"
         message is shown. Otherwise, does nothing.
      */
-    static void NotifyUpdateError(ErrorCode err = Err_Generic);
+    static void NotifyUpdateError(ErrorCode err, const char * error_message);
 
     /**
         Notifies the UI that a new version is available.

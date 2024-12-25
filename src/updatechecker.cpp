@@ -275,9 +275,14 @@ void UpdateChecker::PerformUpdateCheck()
 
         UI::NotifyUpdateAvailable(appcast, ShouldAutomaticallyInstall());
     }
+    catch (const std::exception& ex)
+    {
+        UI::NotifyUpdateError(Err_Generic, ex.what());
+        throw;
+    }
     catch ( ... )
     {
-        UI::NotifyUpdateError();
+        UI::NotifyUpdateError(Err_Generic, "");
         throw;
     }
 }

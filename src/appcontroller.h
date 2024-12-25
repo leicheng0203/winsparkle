@@ -58,7 +58,7 @@ public:
     //@{
 
     /// Notify that an error occurred.
-    static void NotifyUpdateError();
+    static void NotifyUpdateError(int error_code, const char* error_message);
 
     /// Notify that an update has been found.
     static void NotifyUpdateFound();

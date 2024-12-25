@@ -361,8 +361,8 @@ WIN_SPARKLE_API int __cdecl win_sparkle_get_update_check_interval();
 */
 WIN_SPARKLE_API time_t __cdecl win_sparkle_get_last_check_time();
 
-/// Callback type for win_sparkle_error_callback()
-typedef void (__cdecl *win_sparkle_error_callback_t)();
+/// Callback type for win_sparkle_error_callback(int error_code, const char* error_message)
+typedef void (__cdecl *win_sparkle_error_callback_t)(int, const char*);
 
 /**
     Set callback to be called when the updater encounters an error.

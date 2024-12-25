@@ -1533,9 +1533,9 @@ void UI::NotifyUpdateDownloaded(const std::wstring& updateFile, const Appcast &a
 
 
 /*static*/
-void UI::NotifyUpdateError(ErrorCode err)
+void UI::NotifyUpdateError(ErrorCode err, const char* error_message)
 {
-    ApplicationController::NotifyUpdateError();
+    ApplicationController::NotifyUpdateError(err, error_message);
 
     UIThreadAccess uit;
 

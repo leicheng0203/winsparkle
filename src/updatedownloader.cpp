@@ -192,15 +192,20 @@ void UpdateDownloader::Run()
 
       UI::NotifyUpdateDownloaded(sink.GetFilePath(), m_appcast);
     }
-    catch (BadSignatureException&)
+    catch (BadSignatureException& ex)
     {
         CleanLeftovers();  // remove potentially corrupted file
-        UI::NotifyUpdateError(Err_BadSignature);
+        UI::NotifyUpdateError(Err_BadSignature, ex.what());
+        throw;
+    }
+    catch (const std::exception& ex)
+    {
+        UI::NotifyUpdateError(Err_Generic, ex.what());
         throw;
     }
     catch ( ... )
     {
-        UI::NotifyUpdateError();
+        UI::NotifyUpdateError(Err_Generic, "Unknown exception");
         throw;
     }
 }
