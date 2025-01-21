@@ -361,6 +361,22 @@ WIN_SPARKLE_API int __cdecl win_sparkle_get_update_check_interval();
 */
 WIN_SPARKLE_API time_t __cdecl win_sparkle_get_last_check_time();
 
+/**
+    Gets the time for the last update version.
+
+    Default value is -1, indicating that it has never been updated.
+
+    @since 0.4
+*/
+WIN_SPARKLE_API time_t __cdecl win_sparkle_get_last_update_time();
+
+/**
+    Sets the time for the last update version.
+
+    @since 0.4
+*/
+WIN_SPARKLE_API void __cdecl win_sparkle_set_last_update_time();
+
 /// Callback type for win_sparkle_error_callback(int error_code, const char* error_message)
 typedef void (__cdecl *win_sparkle_error_callback_t)(int, const char*);
 

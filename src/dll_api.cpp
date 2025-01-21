@@ -293,6 +293,30 @@ WIN_SPARKLE_API time_t __cdecl win_sparkle_get_last_check_time()
     return DEFAULT_LAST_CHECK_TIME;
 }
 
+WIN_SPARKLE_API time_t __cdecl win_sparkle_get_last_update_time()
+{
+    static const time_t DEFAULT_LAST_UPDATE_TIME = -1;
+
+    try
+    {
+        time_t last_update;
+        Settings::ReadConfigValue("LastUpdateTime", last_update, DEFAULT_LAST_UPDATE_TIME);
+        return last_update;
+    }
+    CATCH_ALL_EXCEPTIONS
+
+    return DEFAULT_LAST_UPDATE_TIME;
+}
+
+WIN_SPARKLE_API void __cdecl win_sparkle_set_last_update_time()
+{
+    try
+    {
+        Settings::WriteConfigValue("LastUpdateTime", time(NULL));
+    }
+    CATCH_ALL_EXCEPTIONS
+}
+
 WIN_SPARKLE_API void __cdecl win_sparkle_set_error_callback(win_sparkle_error_callback_t callback)
 {
     try
