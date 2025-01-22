@@ -317,6 +317,26 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_last_update_time()
     CATCH_ALL_EXCEPTIONS
 }
 
+WIN_SPARKLE_API bool __cdecl win_sparkle_is_critical_update()
+{
+    try
+    {
+        // Todo
+        return false;
+    }
+    CATCH_ALL_EXCEPTIONS
+}
+
+WIN_SPARKLE_API void __cdecl win_sparkle_skip_version()
+{
+    // Todo
+}
+
+WIN_SPARKLE_API void __cdecl win_sparkle_install()
+{
+    // Todo
+}
+
 WIN_SPARKLE_API void __cdecl win_sparkle_set_error_callback(win_sparkle_error_callback_t callback)
 {
     try

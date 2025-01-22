@@ -83,13 +83,13 @@ void ApplicationController::NotifyUpdateError(int error_code, const char* error_
     }
 }
 
-void ApplicationController::NotifyUpdateFound()
+void ApplicationController::NotifyUpdateFound(const Appcast& info)
 {
     {
         CriticalSectionLocker lock(ms_csVars);
         if (ms_cbDidFindUpdate)
         {
-            (*ms_cbDidFindUpdate)();
+            (*ms_cbDidFindUpdate)(info.ShortVersionString.c_str());
             return;
         }
     }

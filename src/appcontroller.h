@@ -28,7 +28,7 @@
 
 #include "winsparkle.h"
 #include "threads.h"
-
+#include "appcast.h"
 
 namespace winsparkle
 {
@@ -61,7 +61,7 @@ public:
     static void NotifyUpdateError(int error_code, const char* error_message);
 
     /// Notify that an update has been found.
-    static void NotifyUpdateFound();
+    static void NotifyUpdateFound(const Appcast& info);
 
     /// Notify that an update has not been found.
     static void NotifyUpdateNotFound();

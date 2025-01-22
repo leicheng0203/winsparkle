@@ -377,6 +377,27 @@ WIN_SPARKLE_API time_t __cdecl win_sparkle_get_last_update_time();
 */
 WIN_SPARKLE_API void __cdecl win_sparkle_set_last_update_time();
 
+/**
+    The retrieved update version is a critical update?
+
+    @since 0.4
+*/
+WIN_SPARKLE_API bool __cdecl win_sparkle_is_critical_update();
+
+/**
+    Skip the version.
+
+    @since 0.4
+*/
+WIN_SPARKLE_API void __cdecl win_sparkle_skip_version();
+
+/**
+    Skip the version.
+
+    @since 0.4
+*/
+WIN_SPARKLE_API void __cdecl win_sparkle_install();
+
 /// Callback type for win_sparkle_error_callback(int error_code, const char* error_message)
 typedef void (__cdecl *win_sparkle_error_callback_t)(int, const char*);
 
@@ -433,7 +454,7 @@ typedef void (__cdecl *win_sparkle_shutdown_request_callback_t)();
 WIN_SPARKLE_API void __cdecl win_sparkle_set_shutdown_request_callback(win_sparkle_shutdown_request_callback_t);
 
 /// Callback type for win_sparkle_did_find_update_callback()
-typedef void(__cdecl *win_sparkle_did_find_update_callback_t)();
+typedef void(__cdecl *win_sparkle_did_find_update_callback_t)(const char* version);
 
 /**
     Set callback to be called when the updater did find an update.

@@ -1153,8 +1153,9 @@ public:
 
     // Sends a message with ID @a msg to the app.
     void SendMsg(int msg, EventPayload *data = NULL);
+    UpdateDialog* GetInstance() const;
 
-private:
+public:
     void InitWindow();
     void ShowWindow();
 
@@ -1257,6 +1258,10 @@ void App::SendMsg(int msg, EventPayload *data)
     wxQueueEvent(this, event);
 }
 
+UpdateDialog* App::GetInstance() const
+{
+    return m_win;
+}
 
 void App::InitWindow()
 {
@@ -1500,7 +1505,7 @@ void UI::NotifyNoUpdates(bool installAutomatically)
 /*static*/
 void UI::NotifyUpdateAvailable(const Appcast& info, bool installAutomatically)
 {
-    ApplicationController::NotifyUpdateFound();
+    ApplicationController::NotifyUpdateFound(info);
 
     UIThreadAccess uit;
     EventPayload payload;
