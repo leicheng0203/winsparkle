@@ -104,6 +104,10 @@ public:
      */
     static void AskForPermission();
 
+    static void SkipVersion();
+
+    static void Install();
+
     /**
         Sets HINSTANCE of the DLL.
 

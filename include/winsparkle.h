@@ -378,13 +378,6 @@ WIN_SPARKLE_API time_t __cdecl win_sparkle_get_last_update_time();
 WIN_SPARKLE_API void __cdecl win_sparkle_set_last_update_time();
 
 /**
-    The retrieved update version is a critical update?
-
-    @since 0.4
-*/
-WIN_SPARKLE_API bool __cdecl win_sparkle_is_critical_update();
-
-/**
     Skip the version.
 
     @since 0.4
@@ -454,7 +447,7 @@ typedef void (__cdecl *win_sparkle_shutdown_request_callback_t)();
 WIN_SPARKLE_API void __cdecl win_sparkle_set_shutdown_request_callback(win_sparkle_shutdown_request_callback_t);
 
 /// Callback type for win_sparkle_did_find_update_callback()
-typedef void(__cdecl *win_sparkle_did_find_update_callback_t)(const char* version);
+typedef void(__cdecl *win_sparkle_did_find_update_callback_t)(const char* version, bool critical_update);
 
 /**
     Set callback to be called when the updater did find an update.
@@ -469,6 +462,14 @@ typedef void(__cdecl *win_sparkle_did_find_update_callback_t)(const char* versio
     @see win_sparkle_check_update_with_ui_and_install()
 */
 WIN_SPARKLE_API void __cdecl win_sparkle_set_did_find_update_callback(win_sparkle_did_find_update_callback_t callback);
+
+/// Callback type for win_sparkle_set_download_progress_callback()
+typedef void(__cdecl* win_sparkle_download_progress_callback_t)(size_t downloaded, size_t total);
+
+/**
+    Register a callback to be triggered when the updater reports download progress.
+*/
+WIN_SPARKLE_API void __cdecl win_sparkle_set_download_progress_callback(win_sparkle_download_progress_callback_t callback);
 
 /// Callback type for win_sparkle_did_not_find_update_callback()
 typedef void (__cdecl *win_sparkle_did_not_find_update_callback_t)();

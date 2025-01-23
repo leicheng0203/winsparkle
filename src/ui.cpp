@@ -432,6 +432,9 @@ public:
     // change state into "update downloaded"
     void StateUpdateDownloaded(const std::wstring& updateFile, const std::string &installerArguments);
 
+    void SkipVersion();
+    void Install();
+
 private:
     void EnablePulsing(bool enable);
     void OnTimer(wxTimerEvent& event);
@@ -1010,6 +1013,17 @@ void UpdateDialog::StateUpdateDownloaded(const std::wstring& updateFile, const s
     MakeResizable(false);
 }
 
+void UpdateDialog::SkipVersion()
+{
+    wxCommandEvent nullEvent;
+    OnSkipVersion(nullEvent);
+}
+
+void UpdateDialog::Install()
+{
+    wxCommandEvent nullEvent;
+    OnInstall(nullEvent);
+}
 
 void UpdateDialog::ShowReleaseNotes(const Appcast& info)
 {
@@ -1153,9 +1167,10 @@ public:
 
     // Sends a message with ID @a msg to the app.
     void SendMsg(int msg, EventPayload *data = NULL);
-    UpdateDialog* GetInstance() const;
+    void SkipVersion();
+    void Install();
 
-public:
+private:
     void InitWindow();
     void ShowWindow();
 
@@ -1258,9 +1273,20 @@ void App::SendMsg(int msg, EventPayload *data)
     wxQueueEvent(this, event);
 }
 
-UpdateDialog* App::GetInstance() const
+void App::SkipVersion()
 {
-    return m_win;
+    if (m_win)
+    {
+        m_win->SkipVersion();
+    }
+}
+
+void App::Install()
+{
+    if (m_win)
+    {
+        m_win->Install();
+    }
 }
 
 void App::InitWindow()
@@ -1518,6 +1544,8 @@ void UI::NotifyUpdateAvailable(const Appcast& info, bool installAutomatically)
 /*static*/
 void UI::NotifyDownloadProgress(size_t downloaded, size_t total)
 {
+    ApplicationController::NotifyDownloadProgress(downloaded, total);
+
     UIThreadAccess uit;
     EventPayload payload;
     payload.sizeDownloaded = downloaded;
@@ -1566,6 +1594,18 @@ void UI::AskForPermission()
 {
     UIThreadAccess uit;
     uit.App().SendMsg(MSG_ASK_FOR_PERMISSION);
+}
+
+void UI::SkipVersion()
+{
+    UIThreadAccess uit;
+    uit.App().SkipVersion();
+}
+
+void UI::Install()
+{
+    UIThreadAccess uit;
+    uit.App().Install();
 }
 
 } // namespace winsparkle

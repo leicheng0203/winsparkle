@@ -317,24 +317,22 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_last_update_time()
     CATCH_ALL_EXCEPTIONS
 }
 
-WIN_SPARKLE_API bool __cdecl win_sparkle_is_critical_update()
+WIN_SPARKLE_API void __cdecl win_sparkle_skip_version()
 {
     try
     {
-        // Todo
-        return false;
+        UI::SkipVersion();
     }
     CATCH_ALL_EXCEPTIONS
 }
 
-WIN_SPARKLE_API void __cdecl win_sparkle_skip_version()
-{
-    // Todo
-}
-
 WIN_SPARKLE_API void __cdecl win_sparkle_install()
 {
-    // Todo
+    try
+    {
+        UI::Install();
+    }
+    CATCH_ALL_EXCEPTIONS
 }
 
 WIN_SPARKLE_API void __cdecl win_sparkle_set_error_callback(win_sparkle_error_callback_t callback)
@@ -369,6 +367,15 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_did_find_update_callback(win_sparkl
     try
     {
         ApplicationController::SetDidFindUpdateCallback(callback);
+    }
+    CATCH_ALL_EXCEPTIONS
+}
+
+WIN_SPARKLE_API void __cdecl win_sparkle_set_download_progress_callback(win_sparkle_download_progress_callback_t callback)
+{
+    try
+    {
+        ApplicationController::SetDownloadProgressCallback(callback);
     }
     CATCH_ALL_EXCEPTIONS
 }
