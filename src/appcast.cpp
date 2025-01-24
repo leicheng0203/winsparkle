@@ -175,6 +175,7 @@ void trim_whitespace(std::string& s)
 #define NODE_LINK       "link"
 #define NODE_ENCLOSURE  "enclosure"
 #define NODE_MIN_OS_VERSION NS_SPARKLE_NAME("minimumSystemVersion")
+#define NODE_MIN_SERVER_VERSION NS_SPARKLE_NAME("minimumServerVersion")
 #define NODE_CRITICAL_UPDATE NS_SPARKLE_NAME("criticalUpdate")
 #define ATTR_URL        "url"
 #define ATTR_VERSION    NS_SPARKLE_NAME("version")
@@ -193,7 +194,7 @@ struct ContextData
     ContextData(XML_Parser& p)
         : parser(p),
         in_channel(0), in_item(0), in_relnotes(0), in_title(0), in_description(0), in_link(0),
-        in_version(0), in_shortversion(0), in_dsasignature(0), in_min_os_version(0)
+        in_version(0), in_shortversion(0), in_dsasignature(0), in_min_os_version(0), in_min_server_version(0)
     {}
 
 	// call when entering <item> element
@@ -211,7 +212,7 @@ struct ContextData
     int in_channel, in_item, in_relnotes, in_title, in_description, in_link;
 
     // is inside <sparkle:version> or <sparkle:shortVersionString> etc. node?
-    int in_version, in_shortversion, in_dsasignature, in_min_os_version;
+    int in_version, in_shortversion, in_dsasignature, in_min_os_version, in_min_server_version;
 
     // currently parsed item
     Appcast current;
@@ -274,6 +275,10 @@ void XMLCALL OnStartElement(void *data, const char *name, const char **attrs)
         {
             ctxt.in_min_os_version++;
         }
+        else if (strcmp(name, NODE_MIN_SERVER_VERSION) == 0)
+        {
+            ctxt.in_min_server_version++;
+        }
         else if (strcmp(name, NODE_ENCLOSURE) == 0)
         {
             Appcast& item = ctxt.current;
@@ -334,6 +339,10 @@ void XMLCALL OnEndElement(void *data, const char *name)
         else if (strcmp(name, NODE_MIN_OS_VERSION) == 0)
         {
             ctxt.in_min_os_version--;
+        }
+        else if (strcmp(name, NODE_MIN_SERVER_VERSION) == 0)
+        {
+            ctxt.in_min_server_version--;
         }
         else if (strcmp(name, NODE_LINK) == 0)
         {
@@ -426,6 +435,10 @@ void XMLCALL OnText(void *data, const char *s, int len)
     else if (ctxt.in_min_os_version)
     {
         item.MinOSVersion.append(s, len);
+    }
+    else if (ctxt.in_min_server_version)
+    {
+        item.MinServerVersion.append(s, len);
     }
 }
 

@@ -243,10 +243,16 @@ void UpdateChecker::PerformUpdateCheck()
 		std::stable_sort
         (
             all.begin(), all.end(),
-            [](const Appcast& a, const Appcast& b) { return CompareVersions(a.Version, b.Version) > 0; }
+            [](const Appcast& a, const Appcast& b) { return CompareVersions(a.Version, b.Version) < 0; }
         );
 
-        auto appcast = all.front();
+        const auto currentVersion = WideToAnsi(Settings::GetAppBuildVersion());
+        const auto pos = std::find_if(all.begin(), all.end(), [&currentVersion](const Appcast& appcast)
+            {
+                return appcast.CriticalUpdate && CompareVersions(currentVersion, appcast.Version) < 0;
+            });
+
+        const auto appcast = pos != all.end() ? *pos : all.back();
 
         if (!appcast.ReleaseNotesURL.empty())
             CheckForInsecureURL(appcast.ReleaseNotesURL, "release notes");
@@ -254,9 +260,6 @@ void UpdateChecker::PerformUpdateCheck()
             CheckForInsecureURL(appcast.enclosure.DownloadURL, "update file");
 
         Settings::WriteConfigValue("LastCheckTime", time(NULL));
-
-        const std::string currentVersion =
-                WideToAnsi(Settings::GetAppBuildVersion());
 
         // Check if our version is out of date.
         if ( !appcast.IsValid() || CompareVersions(currentVersion, appcast.Version) >= 0 )

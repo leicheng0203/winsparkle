@@ -671,11 +671,11 @@ void UpdateDialog::OnInstall(wxCommandEvent&)
     else if (m_downloader)
     {
         // Todo hang
-        //m_downloader->TerminateAndJoin();
-        //delete m_downloader;
-        //m_downloader = NULL;
+        m_downloader->TerminateAndJoin();
+        delete m_downloader;
+        m_downloader = NULL;
 
-        //UpdateDownloader::CleanLeftovers();
+        UpdateDownloader::CleanLeftovers();
 
         StateDownloading();
 

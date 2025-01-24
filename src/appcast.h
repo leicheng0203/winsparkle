@@ -57,6 +57,9 @@ struct Appcast
     // Minimum OS version required for update
     std::string MinOSVersion;
 
+    // Minimum Server version required for update
+    std::string MinServerVersion;
+
     // CriticalUpdate?
     bool CriticalUpdate = false;
 
