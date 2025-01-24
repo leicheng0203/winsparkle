@@ -380,6 +380,15 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_download_progress_callback(win_spar
     CATCH_ALL_EXCEPTIONS
 }
 
+WIN_SPARKLE_API void __cdecl win_sparkle_set_download_complete_callback(win_sparkle_download_complete_callback_t callback)
+{
+    try
+    {
+        ApplicationController::SetDownloadCompleteCallback(callback);
+    }
+    CATCH_ALL_EXCEPTIONS
+}
+
 WIN_SPARKLE_API void __cdecl win_sparkle_set_did_not_find_update_callback(win_sparkle_did_not_find_update_callback_t callback)
 {
     try

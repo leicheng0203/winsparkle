@@ -668,6 +668,21 @@ void UpdateDialog::OnInstall(wxCommandEvent&)
         m_downloader = new UpdateDownloader(m_appcast);
         m_downloader->Start();
     }
+    else if (m_downloader)
+    {
+        // Todo hang
+        //m_downloader->TerminateAndJoin();
+        //delete m_downloader;
+        //m_downloader = NULL;
+
+        //UpdateDownloader::CleanLeftovers();
+
+        StateDownloading();
+
+        // Run the download in background.
+        m_downloader = new UpdateDownloader(m_appcast);
+        m_downloader->Start();
+    }
 }
 
 void UpdateDialog::OnRunInstaller(wxCommandEvent&)
@@ -1557,6 +1572,8 @@ void UI::NotifyDownloadProgress(size_t downloaded, size_t total)
 /*static*/
 void UI::NotifyUpdateDownloaded(const std::wstring& updateFile, const Appcast &appcast)
 {
+    ApplicationController::NotifyDownloadComplete();
+
     UIThreadAccess uit;
     EventPayload payload;
     payload.updateFile = updateFile;

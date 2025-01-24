@@ -191,6 +191,8 @@ void UpdateDownloader::Run()
       }
 
       UI::NotifyUpdateDownloaded(sink.GetFilePath(), m_appcast);
+      // Todo for test
+      //UI::NotifyUpdateError(Err_Generic, "");
     }
     catch (BadSignatureException& ex)
     {

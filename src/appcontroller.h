@@ -64,6 +64,7 @@ public:
     static void NotifyUpdateFound(const Appcast& info);
 
     static void NotifyDownloadProgress(size_t downloaded, size_t total);
+    static void NotifyDownloadComplete();
 
     /// Notify that an update has not been found.
     static void NotifyUpdateNotFound();
@@ -125,6 +126,13 @@ public:
         ms_cbDownloadProgress = callback;
     }
 
+    /// Set the win_sparkle_download_complete_callback_t function
+    static void SetDownloadCompleteCallback(win_sparkle_download_complete_callback_t callback)
+    {
+        CriticalSectionLocker lock(ms_csVars);
+        ms_cbDownloadComplete = callback;
+    }
+
     /// Set the win_sparkle_did_not_find_update_callback_t function
     static void SetDidNotFindUpdateCallback(win_sparkle_did_not_find_update_callback_t callback)
     {
@@ -179,6 +187,7 @@ private:
     static win_sparkle_shutdown_request_callback_t    ms_cbRequestShutdown;
     static win_sparkle_did_find_update_callback_t     ms_cbDidFindUpdate;
     static win_sparkle_download_progress_callback_t   ms_cbDownloadProgress;
+    static win_sparkle_download_complete_callback_t   ms_cbDownloadComplete;
     static win_sparkle_did_not_find_update_callback_t ms_cbDidNotFindUpdate;
     static win_sparkle_update_cancelled_callback_t    ms_cbUpdateCancelled;
     static win_sparkle_update_skipped_callback_t      ms_cbUpdateSkipped;

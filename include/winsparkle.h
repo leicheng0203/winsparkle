@@ -385,7 +385,7 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_last_update_time();
 WIN_SPARKLE_API void __cdecl win_sparkle_skip_version();
 
 /**
-    Skip the version.
+    Start install.
 
     @since 0.4
 */
@@ -470,6 +470,14 @@ typedef void(__cdecl* win_sparkle_download_progress_callback_t)(size_t downloade
     Register a callback to be triggered when the updater reports download progress.
 */
 WIN_SPARKLE_API void __cdecl win_sparkle_set_download_progress_callback(win_sparkle_download_progress_callback_t callback);
+
+/// Callback type for win_sparkle_set_download_complete_callback()
+typedef void(__cdecl* win_sparkle_download_complete_callback_t)();
+
+/**
+    Register a callback to be triggered when the updater reports download complete.
+*/
+WIN_SPARKLE_API void __cdecl win_sparkle_set_download_complete_callback(win_sparkle_download_complete_callback_t callback);
 
 /// Callback type for win_sparkle_did_not_find_update_callback()
 typedef void (__cdecl *win_sparkle_did_not_find_update_callback_t)();
