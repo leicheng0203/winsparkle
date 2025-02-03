@@ -326,6 +326,15 @@ WIN_SPARKLE_API void __cdecl win_sparkle_skip_version()
     CATCH_ALL_EXCEPTIONS
 }
 
+WIN_SPARKLE_API void __cdecl win_sparkle_remind_later()
+{
+    try
+    {
+        UI::RemindLater();
+    }
+    CATCH_ALL_EXCEPTIONS
+}
+
 WIN_SPARKLE_API void __cdecl win_sparkle_install()
 {
     try

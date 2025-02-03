@@ -156,6 +156,7 @@ struct EventPayload
     std::wstring updateFile;
     bool         installAutomatically;
     ErrorCode    error;
+    std::string  errorMessage;
 };
 
 
@@ -422,7 +423,7 @@ public:
     // change state into "no updates found"
     void StateNoUpdateFound(bool installAutomatically);
     // change state into "update error"
-    void StateUpdateError(ErrorCode err);
+    void StateUpdateError(ErrorCode err, const std::string& error_message);
     // change state into "a new version is available"
     void StateUpdateAvailable(const Appcast& info, bool installAutomatically);
     // change state into "downloading update"
@@ -433,6 +434,7 @@ public:
     void StateUpdateDownloaded(const std::wstring& updateFile, const std::string &installerArguments);
 
     void SkipVersion();
+    void RemindLater();
     void Install();
 
 private:
@@ -670,7 +672,6 @@ void UpdateDialog::OnInstall(wxCommandEvent&)
     }
     else if (m_downloader)
     {
-        // Todo hang
         m_downloader->TerminateAndJoin();
         delete m_downloader;
         m_downloader = NULL;
@@ -828,7 +829,7 @@ void UpdateDialog::StateNoUpdateFound(bool installAutomatically)
 }
 
 
-void UpdateDialog::StateUpdateError(ErrorCode err)
+void UpdateDialog::StateUpdateError(ErrorCode err, const std::string& error_message)
 {
     m_errorOccurred = true;
 
@@ -860,6 +861,8 @@ void UpdateDialog::StateUpdateError(ErrorCode err)
     HIDE(m_releaseNotesSizer);
     HIDE(m_updateButtonsSizer);
     MakeResizable(false);
+
+    ApplicationController::NotifyUpdateError(err, error_message.c_str());
 }
 
 
@@ -1026,12 +1029,20 @@ void UpdateDialog::StateUpdateDownloaded(const std::wstring& updateFile, const s
     HIDE(m_releaseNotesSizer);
     HIDE(m_updateButtonsSizer);
     MakeResizable(false);
+
+    ApplicationController::NotifyDownloadComplete();
 }
 
 void UpdateDialog::SkipVersion()
 {
     wxCommandEvent nullEvent;
     OnSkipVersion(nullEvent);
+}
+
+void UpdateDialog::RemindLater()
+{
+    wxCommandEvent nullEvent;
+    OnRemindLater(nullEvent);
 }
 
 void UpdateDialog::Install()
@@ -1183,6 +1194,7 @@ public:
     // Sends a message with ID @a msg to the app.
     void SendMsg(int msg, EventPayload *data = NULL);
     void SkipVersion();
+    void RemindLater();
     void Install();
 
 private:
@@ -1296,6 +1308,14 @@ void App::SkipVersion()
     }
 }
 
+void App::RemindLater()
+{
+    if (m_win)
+    {
+        m_win->RemindLater();
+    }
+}
+
 void App::Install()
 {
     if (m_win)
@@ -1347,7 +1367,6 @@ void App::OnShowCheckingUpdates(wxThreadEvent&)
 {
     InitWindow();
     m_win->StateCheckingUpdates();
-    ShowWindow();
 }
 
 
@@ -1366,7 +1385,7 @@ void App::OnUpdateError(wxThreadEvent& event)
     if ( m_win )
     {
         EventPayload payload(event.GetPayload<EventPayload>());
-        m_win->StateUpdateError(payload.error);
+        m_win->StateUpdateError(payload.error, payload.errorMessage);
     }
 }
 
@@ -1395,8 +1414,6 @@ void App::OnUpdateAvailable(wxThreadEvent& event)
 
     EventPayload payload(event.GetPayload<EventPayload>());
     m_win->StateUpdateAvailable(payload.appcast, payload.installAutomatically);
-
-    ShowWindow();
 }
 
 
@@ -1572,8 +1589,6 @@ void UI::NotifyDownloadProgress(size_t downloaded, size_t total)
 /*static*/
 void UI::NotifyUpdateDownloaded(const std::wstring& updateFile, const Appcast &appcast)
 {
-    ApplicationController::NotifyDownloadComplete();
-
     UIThreadAccess uit;
     EventPayload payload;
     payload.updateFile = updateFile;
@@ -1585,8 +1600,6 @@ void UI::NotifyUpdateDownloaded(const std::wstring& updateFile, const Appcast &a
 /*static*/
 void UI::NotifyUpdateError(ErrorCode err, const char* error_message)
 {
-    ApplicationController::NotifyUpdateError(err, error_message);
-
     UIThreadAccess uit;
 
     if ( !uit.IsRunning() )
@@ -1594,6 +1607,7 @@ void UI::NotifyUpdateError(ErrorCode err, const char* error_message)
 
     EventPayload payload;
     payload.error = err;
+    payload.errorMessage = error_message;
     uit.App().SendMsg(MSG_UPDATE_ERROR, &payload);
 }
 
@@ -1617,6 +1631,12 @@ void UI::SkipVersion()
 {
     UIThreadAccess uit;
     uit.App().SkipVersion();
+}
+
+void UI::RemindLater()
+{
+    UIThreadAccess uit;
+    uit.App().RemindLater();
 }
 
 void UI::Install()

@@ -385,6 +385,13 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_last_update_time();
 WIN_SPARKLE_API void __cdecl win_sparkle_skip_version();
 
 /**
+    Remind later.
+
+    @since 0.4
+*/
+WIN_SPARKLE_API void __cdecl win_sparkle_remind_later();
+
+/**
     Start install.
 
     @since 0.4

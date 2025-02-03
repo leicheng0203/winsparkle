@@ -106,6 +106,8 @@ public:
 
     static void SkipVersion();
 
+    static void RemindLater();
+
     static void Install();
 
     /**

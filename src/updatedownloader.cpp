@@ -189,10 +189,8 @@ void UpdateDownloader::Run()
           // backward compatibility - accept as is, but complain about it
           LogError("Using unsigned updates!");
       }
-
+      
       UI::NotifyUpdateDownloaded(sink.GetFilePath(), m_appcast);
-      // Todo for test
-      //UI::NotifyUpdateError(Err_Generic, "");
     }
     catch (BadSignatureException& ex)
     {
