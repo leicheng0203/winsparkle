@@ -167,6 +167,16 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_langid(unsigned short lang);
 WIN_SPARKLE_API void __cdecl win_sparkle_set_appcast_url(const char *url);
 
 /**
+    @note  read appcast url from registry and then set appcast url.
+ */
+WIN_SPARKLE_API void __cdecl win_sparkle_read_registry_and_set_appcast_url();
+
+/**
+    @return  true if the registry already has an Appcast URL.
+ */
+WIN_SPARKLE_API bool __cdecl win_sparkle_has_appcast_url();
+
+/**
     Sets DSA public key.
 
     Only PEM format is supported.

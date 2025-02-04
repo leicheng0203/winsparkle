@@ -151,6 +151,31 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_appcast_url(const char *url)
     CATCH_ALL_EXCEPTIONS
 }
 
+WIN_SPARKLE_API void __cdecl win_sparkle_read_registry_and_set_appcast_url()
+{
+    try
+    {
+        std::string appcast_url;
+        Settings::ReadConfigValue("AppcastURL", appcast_url);
+        if (!appcast_url.empty())
+        {
+            win_sparkle_set_appcast_url(appcast_url.c_str());
+        }
+    }
+    CATCH_ALL_EXCEPTIONS
+}
+
+WIN_SPARKLE_API bool __cdecl win_sparkle_has_appcast_url()
+{
+    try
+    {
+        std::string appcast_url;
+        Settings::ReadConfigValue("AppcastURL", appcast_url);
+        return !appcast_url.empty();
+    }
+    CATCH_ALL_EXCEPTIONS
+}
+
 WIN_SPARKLE_API int __cdecl win_sparkle_set_dsa_pub_pem(const char *dsa_pub_pem)
 {
     try
