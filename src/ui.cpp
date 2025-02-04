@@ -1547,8 +1547,6 @@ void UI::ShutDown()
 /*static*/
 void UI::NotifyNoUpdates(bool installAutomatically)
 {
-    ApplicationController::NotifyUpdateNotFound();
-
     UIThreadAccess uit;
 
     if ( !uit.IsRunning() )
@@ -1557,6 +1555,8 @@ void UI::NotifyNoUpdates(bool installAutomatically)
     EventPayload payload;
     payload.installAutomatically = installAutomatically;
     uit.App().SendMsg(MSG_NO_UPDATE_FOUND, &payload);
+
+    ApplicationController::NotifyUpdateNotFound();
 }
 
 
