@@ -658,7 +658,7 @@ void UpdateDialog::OnInstall(wxCommandEvent&)
 {
     if ( !m_appcast.HasDownload() )
     {
-        wxLaunchDefaultBrowser(m_appcast.WebBrowserURL, wxBROWSER_NEW_WINDOW);
+        ApplicationController::NotifyAppcastXmlUnavailable();
         m_closeInitiatedByUpdater = true;
         Close();
     }
@@ -862,10 +862,15 @@ void UpdateDialog::StateUpdateError(ErrorCode err, const std::string& error_mess
     HIDE(m_updateButtonsSizer);
     MakeResizable(false);
 
-    ApplicationController::NotifyUpdateError(err, error_message.c_str());
+    if (!m_appcast.HasDownload())
+    {
+        ApplicationController::NotifyAppcastXmlUnavailable();
+    }
+    else
+    {
+        ApplicationController::NotifyUpdateError(err, error_message.c_str());
+    }
 }
-
-
 
 void UpdateDialog::StateUpdateAvailable(const Appcast& info, bool installAutomatically)
 {

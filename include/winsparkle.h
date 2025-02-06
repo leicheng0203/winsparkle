@@ -480,6 +480,15 @@ typedef void(__cdecl *win_sparkle_did_find_update_callback_t)(const char* versio
 */
 WIN_SPARKLE_API void __cdecl win_sparkle_set_did_find_update_callback(win_sparkle_did_find_update_callback_t callback);
 
+/// Callback type for win_sparkle_appcast_xml_unavailable_callback()
+typedef void(__cdecl* win_sparkle_appcast_xml_unavailable_callback_t)();
+
+/**
+    Set callback to be called when the appcast.xml unavailable.
+*/
+WIN_SPARKLE_API void __cdecl win_sparkle_set_appcast_xml_unavailable_callback(win_sparkle_appcast_xml_unavailable_callback_t callback);
+
+
 /// Callback type for win_sparkle_set_download_progress_callback()
 typedef void(__cdecl* win_sparkle_download_progress_callback_t)(size_t downloaded, size_t total);
 

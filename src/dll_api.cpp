@@ -405,6 +405,15 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_did_find_update_callback(win_sparkl
     CATCH_ALL_EXCEPTIONS
 }
 
+WIN_SPARKLE_API void __cdecl win_sparkle_set_appcast_xml_unavailable_callback(win_sparkle_appcast_xml_unavailable_callback_t callback)
+{
+    try
+    {
+        ApplicationController::SetAppcastXmlUnavailableCallback(callback);
+    }
+    CATCH_ALL_EXCEPTIONS
+}
+
 WIN_SPARKLE_API void __cdecl win_sparkle_set_download_progress_callback(win_sparkle_download_progress_callback_t callback)
 {
     try

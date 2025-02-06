@@ -35,6 +35,7 @@ win_sparkle_error_callback_t               ApplicationController::ms_cbError = N
 win_sparkle_can_shutdown_callback_t        ApplicationController::ms_cbIsReadyToShutdown = NULL;
 win_sparkle_shutdown_request_callback_t    ApplicationController::ms_cbRequestShutdown = NULL;
 win_sparkle_did_find_update_callback_t     ApplicationController::ms_cbDidFindUpdate = NULL;
+win_sparkle_appcast_xml_unavailable_callback_t   ApplicationController::ms_cbAppcastXmlUnavailable = NULL;
 win_sparkle_download_progress_callback_t   ApplicationController::ms_cbDownloadProgress = NULL;
 win_sparkle_download_complete_callback_t   ApplicationController::ms_cbDownloadComplete = NULL;
 win_sparkle_did_not_find_update_callback_t ApplicationController::ms_cbDidNotFindUpdate = NULL;
@@ -92,6 +93,18 @@ void ApplicationController::NotifyUpdateFound(const Appcast& info)
         if (ms_cbDidFindUpdate)
         {
             (*ms_cbDidFindUpdate)(info.ShortVersionString.c_str(), info.CriticalUpdate);
+            return;
+        }
+    }
+}
+
+void ApplicationController::NotifyAppcastXmlUnavailable()
+{
+    {
+        CriticalSectionLocker lock(ms_csVars);
+        if (ms_cbAppcastXmlUnavailable)
+        {
+            (*ms_cbAppcastXmlUnavailable)();
             return;
         }
     }
