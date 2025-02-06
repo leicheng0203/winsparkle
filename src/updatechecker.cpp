@@ -36,7 +36,9 @@
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
+#include <string>
 #include <winsparkle.h>
+#include <wininet.h>
 
 using namespace std;
 
@@ -114,6 +116,72 @@ vector<string> SplitVersionString(const string& version)
     list.push_back(s);
 
     return list;
+}
+
+std::string HttpGetWinINet(const std::wstring& url)
+{
+    const auto hInternet = InternetOpen(L"OETH", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+    if (!hInternet)
+    {
+        return "";
+    }
+
+    const auto hConnect = InternetOpenUrl(hInternet, url.c_str(), NULL, 0, INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD, 0);
+    if (!hConnect)
+    {
+        InternetCloseHandle(hInternet);
+        return "";
+    }
+
+    std::string response;
+    char buffer[512] = {};
+    DWORD bytesRead = 0;
+    while (InternetReadFile(hConnect, buffer, sizeof(buffer) - 1, &bytesRead) && bytesRead > 0)
+    {
+        buffer[bytesRead] = '\0';
+        response.append(buffer, bytesRead);
+    }
+
+    InternetCloseHandle(hConnect);
+    InternetCloseHandle(hInternet);
+    return response;
+}
+
+std::string GetServerVersion()
+{
+    const auto kDefaultServerVersion = "2.1.2";
+    const auto kUrl = L"https://master.apps.oc.webcomm.com.tw/getVersion";
+    const auto json_response = HttpGetWinINet(kUrl);
+    if (json_response.empty())
+    {
+        return kDefaultServerVersion;
+    }
+
+    auto start = json_response.find("\"oethServerVersion\"");
+    if (start == std::string::npos)
+    {
+        return kDefaultServerVersion;
+    }
+
+    start = json_response.find(":", start);
+    if (start == std::string::npos)
+    {
+        return kDefaultServerVersion;
+    }
+
+    start = json_response.find("\"", start);
+    if (start == std::string::npos)
+    {
+        return kDefaultServerVersion;
+    }
+
+    const auto end = json_response.find("\"", start + 1);
+    if (end == std::string::npos)
+    {
+        return kDefaultServerVersion;
+    }
+
+    return json_response.substr(start + 1, end - start - 1);
 }
 
 } // anonymous namespace
@@ -231,6 +299,15 @@ void UpdateChecker::PerformUpdateCheck()
         DownloadFile(url, &appcast_xml, this, Settings::GetHttpHeadersString(), Download_BypassProxies);
 
         auto all = Appcast::Load(appcast_xml.data);
+        
+        // Filter to match the minimum server version
+        const auto current_server_version = GetServerVersion();
+        all.erase(std::remove_if(all.begin(), all.end(), [current_server_version](const Appcast& appcast)
+            {
+                return CompareVersions(current_server_version, appcast.MinServerVersion) < 0;
+            }),
+            all.end()
+        );
 
         if (all.empty())
         {
