@@ -349,7 +349,6 @@ void UpdateChecker::PerformUpdateCheck()
         // Check if the user opted to ignore this particular version.
         if ( ShouldSkipUpdate(appcast) )
         {
-            UI::NotifyNoUpdates(ShouldAutomaticallyInstall());
             return;
         }
 
