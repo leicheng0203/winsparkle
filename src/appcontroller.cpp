@@ -92,7 +92,7 @@ void ApplicationController::NotifyUpdateFound(const Appcast& info)
         CriticalSectionLocker lock(ms_csVars);
         if (ms_cbDidFindUpdate)
         {
-            (*ms_cbDidFindUpdate)(info.ShortVersionString.c_str(), info.CriticalUpdate);
+            (*ms_cbDidFindUpdate)(info.Version.c_str(), info.CriticalUpdate);
             return;
         }
     }
