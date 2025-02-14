@@ -111,23 +111,23 @@ struct UpdateDownloadSink : public IDownloadSink
     virtual void SetFilename(const std::wstring& filename)
     {
         if ( m_file )
-            throw std::runtime_error("Update file already set");
+            throw std::runtime_error("Failed to save the update file. Please restart your computer and try again.");
 
         m_path = m_dir + L"\\" + filename;
         m_file = _wfopen(m_path.c_str(), L"wb");
         if ( !m_file )
-            throw std::runtime_error("Cannot save update file");
+            throw std::runtime_error("Failed to save the update file.  Please check disk space and permissions.");
     }
 
     virtual void Add(const void *data, size_t len)
     {
         if ( !m_file )
-            throw std::runtime_error("Filename is not net");
+            throw std::runtime_error("Update failed. Local file not found.");
 
         m_thread.CheckShouldTerminate();
 
         if ( fwrite(data, len, 1, m_file) != 1 )
-            throw std::runtime_error("Cannot save update file");
+            throw std::runtime_error("Failed to save the update file.  Please check disk space and permissions.");
         m_downloaded += len;
 
         // only update at most 10 times/sec so that we don't flood the UI:
@@ -191,6 +191,11 @@ void UpdateDownloader::Run()
       }
       
       UI::NotifyUpdateDownloaded(sink.GetFilePath(), m_appcast);
+    }
+    catch (const DownloadException& ex)
+    {
+        UI::NotifyUpdateError(Err_DownloadFileFailed, ex.what());
+        throw;
     }
     catch (BadSignatureException& ex)
     {

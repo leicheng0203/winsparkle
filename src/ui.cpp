@@ -861,15 +861,6 @@ void UpdateDialog::StateUpdateError(ErrorCode err, const std::string& error_mess
     HIDE(m_releaseNotesSizer);
     HIDE(m_updateButtonsSizer);
     MakeResizable(false);
-
-    if (!m_appcast.HasDownload())
-    {
-        ApplicationController::NotifyAppcastXmlUnavailable();
-    }
-    else
-    {
-        ApplicationController::NotifyUpdateError(err, error_message.c_str());
-    }
 }
 
 void UpdateDialog::StateUpdateAvailable(const Appcast& info, bool installAutomatically)
@@ -1605,6 +1596,24 @@ void UI::NotifyUpdateDownloaded(const std::wstring& updateFile, const Appcast &a
 /*static*/
 void UI::NotifyUpdateError(ErrorCode err, const char* error_message)
 {
+    switch (err)
+    {
+    case winsparkle::Err_Generic:
+        ApplicationController::NotifyUpdateError(err, error_message);
+        break;
+    case winsparkle::Err_BadSignature:
+        ApplicationController::NotifyUpdateError(err, error_message);
+        break;
+    case winsparkle::Err_AppcastXmlUnavailable:
+        ApplicationController::NotifyAppcastXmlUnavailable();
+        break;
+    case winsparkle::Err_DownloadFileFailed:
+        ApplicationController::NotifyDownloadFailed();
+        break;
+    default:
+        break;
+    }
+
     UIThreadAccess uit;
 
     if ( !uit.IsRunning() )

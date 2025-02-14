@@ -35,7 +35,9 @@ namespace winsparkle
 enum ErrorCode
 {
     Err_Generic,
-    Err_BadSignature
+    Err_BadSignature,
+    Err_AppcastXmlUnavailable,
+    Err_DownloadFileFailed
 };
 
 /**

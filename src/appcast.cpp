@@ -453,7 +453,7 @@ std::vector<Appcast> Appcast::Load(const std::string& xml)
 {
     XML_Parser p = XML_ParserCreateNS(NULL, NS_SEP);
     if ( !p )
-        throw std::runtime_error("Failed to create XML parser.");
+        throw std::runtime_error("Update process failed. Please contact support. (1)");
 
     ContextData ctxt(p);
 
@@ -465,10 +465,8 @@ std::vector<Appcast> Appcast::Load(const std::string& xml)
 
     if ( st == XML_STATUS_ERROR )
     {
-        std::string msg("XML parser error: ");
-        msg.append(XML_ErrorString(XML_GetErrorCode(p)));
         XML_ParserFree(p);
-        throw std::runtime_error(msg);
+        throw std::runtime_error("Update process failed. Please contact support. (2)");
     }
 
     XML_ParserFree(p);

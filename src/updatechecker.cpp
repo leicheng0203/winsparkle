@@ -150,7 +150,13 @@ std::string HttpGetWinINet(const std::wstring& url)
 std::string GetServerVersion()
 {
     const auto kDefaultServerVersion = "2.1.2";
-    const auto kUrl = L"https://master.apps.oc.webcomm.com.tw/getVersion";
+
+    // Todo call GetAvailableHost or read from registry
+    //const auto kUrl = L"https://master.apps.oc.webcomm.com.tw/getVersion";
+    const auto kUrl = L"https://gcpdevcorp1.oeth-dev.webcomm.com.tw/getVersion";
+    //const auto kUrl = L"https://oeth-uat.webcomm.com.tw/getVersion";
+    //const auto kUrl = GetAvailableHost() + L"/getVersion";
+    
     const auto json_response = HttpGetWinINet(kUrl);
     if (json_response.empty())
     {
@@ -292,7 +298,7 @@ void UpdateChecker::PerformUpdateCheck()
     {
         const std::string url = Settings::GetAppcastURL();
         if ( url.empty() )
-            throw std::runtime_error("Appcast URL not specified.");
+            throw std::runtime_error("The update source configuration is missing. Please contact support.");
         CheckForInsecureURL(url, "appcast feed");
 
         StringDownloadSink appcast_xml;
@@ -354,6 +360,11 @@ void UpdateChecker::PerformUpdateCheck()
 
         UI::NotifyUpdateAvailable(appcast, ShouldAutomaticallyInstall());
     }
+    catch (const DownloadException& ex)
+    {
+        UI::NotifyUpdateError(Err_AppcastXmlUnavailable, ex.what());
+        throw;
+    }
     catch (const std::exception& ex)
     {
         UI::NotifyUpdateError(Err_Generic, ex.what());
@@ -361,7 +372,7 @@ void UpdateChecker::PerformUpdateCheck()
     }
     catch ( ... )
     {
-        UI::NotifyUpdateError(Err_Generic, "");
+        UI::NotifyUpdateError(Err_Generic, "Unknown exception");
         throw;
     }
 }

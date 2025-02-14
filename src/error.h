@@ -49,6 +49,17 @@ public:
     Win32Exception(const char *extraMsg = NULL);
 };
 
+class DownloadException : public std::runtime_error
+{
+public:
+    /**
+        Creates the exception.
+
+        @param extraMsg  Extra message shown in front of the win32 error.
+     */
+    DownloadException(const char* extraMsg = NULL);
+};
+
 /**
     Logs error to, currently, debug output.
  */

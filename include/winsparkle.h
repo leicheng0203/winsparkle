@@ -505,6 +505,15 @@ typedef void(__cdecl* win_sparkle_download_complete_callback_t)();
 */
 WIN_SPARKLE_API void __cdecl win_sparkle_set_download_complete_callback(win_sparkle_download_complete_callback_t callback);
 
+/// Callback type for win_sparkle_set_download_failed_callback()
+typedef void(__cdecl* win_sparkle_download_failed_callback_t)();
+
+/**
+    Register a callback to be triggered when the updater reports download failed.
+*/
+WIN_SPARKLE_API void __cdecl win_sparkle_set_download_failed_callback(win_sparkle_download_failed_callback_t callback);
+
+
 /// Callback type for win_sparkle_did_not_find_update_callback()
 typedef void (__cdecl *win_sparkle_did_not_find_update_callback_t)();
 

@@ -202,7 +202,7 @@ void DownloadFile(const std::string& url, IDownloadSink* sink, Thread* onThread,
     urlc.dwUrlPathLength = sizeof(url_path);
 
     if ( !InternetCrackUrlA(url.c_str(), 0, ICU_DECODE, &urlc) )
-        throw Win32Exception();
+        throw DownloadException();
 
     InetHandle inet = InternetOpen
                       (
@@ -213,7 +213,7 @@ void DownloadFile(const std::string& url, IDownloadSink* sink, Thread* onThread,
                           INTERNET_FLAG_ASYNC // dwFlags
                       );
     if ( !inet )
-        throw Win32Exception();
+        throw DownloadException();
 
     DWORD dwOption = HTTP_PROTOCOL_FLAG_HTTP2;
     InternetSetOptionW(inet, INTERNET_OPTION_ENABLE_HTTP_PROTOCOL, &dwOption, sizeof(dwOption));
@@ -260,7 +260,7 @@ void DownloadFile(const std::string& url, IDownloadSink* sink, Thread* onThread,
     else
     {
         if (GetLastError() != ERROR_IO_PENDING)
-            throw Win32Exception();
+            throw DownloadException();
     }
 
     WaitUntilSignaledWithTerminationCheck(context.eventRequestComplete, onThread);
@@ -270,7 +270,7 @@ void DownloadFile(const std::string& url, IDownloadSink* sink, Thread* onThread,
     DWORD statusCode;
     if ( GetHttpHeader(conn, HTTP_QUERY_STATUS_CODE, statusCode) && statusCode >= 400 )
     {
-        throw std::runtime_error("Update file not found on the server.");
+        throw std::runtime_error("Update failed, please check your network connection. If the issue persists, contact support.");
     }
 
     // Get content length if possible:
@@ -343,7 +343,7 @@ void DownloadFile(const std::string& url, IDownloadSink* sink, Thread* onThread,
         if (!InternetReadFileEx(conn, &ibuf, IRF_ASYNC | IRF_NO_WAIT, NULL))
         {
             if (GetLastError() != ERROR_IO_PENDING)
-                throw Win32Exception();
+                throw DownloadException();
 
             WaitUntilSignaledWithTerminationCheck(context.eventRequestComplete, onThread);
             continue;
@@ -352,7 +352,7 @@ void DownloadFile(const std::string& url, IDownloadSink* sink, Thread* onThread,
         if (ibuf.dwBufferLength == 0)
         {
             if (context.lastError != ERROR_SUCCESS)
-                throw Win32Exception();
+                throw DownloadException();
             else
                 break; // all of the file was downloaded
         }

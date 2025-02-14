@@ -38,6 +38,7 @@ win_sparkle_did_find_update_callback_t     ApplicationController::ms_cbDidFindUp
 win_sparkle_appcast_xml_unavailable_callback_t   ApplicationController::ms_cbAppcastXmlUnavailable = NULL;
 win_sparkle_download_progress_callback_t   ApplicationController::ms_cbDownloadProgress = NULL;
 win_sparkle_download_complete_callback_t   ApplicationController::ms_cbDownloadComplete = NULL;
+win_sparkle_download_failed_callback_t     ApplicationController::ms_cbDownloadFailed = NULL;
 win_sparkle_did_not_find_update_callback_t ApplicationController::ms_cbDidNotFindUpdate = NULL;
 win_sparkle_update_cancelled_callback_t    ApplicationController::ms_cbUpdateCancelled = NULL;
 win_sparkle_update_skipped_callback_t      ApplicationController::ms_cbUpdateSkipped = NULL;
@@ -129,6 +130,18 @@ void ApplicationController::NotifyDownloadComplete()
         if (ms_cbDownloadComplete)
         {
             (*ms_cbDownloadComplete)();
+            return;
+        }
+    }
+}
+
+void ApplicationController::NotifyDownloadFailed()
+{
+    {
+        CriticalSectionLocker lock(ms_csVars);
+        if (ms_cbDownloadFailed)
+        {
+            (*ms_cbDownloadFailed)();
             return;
         }
     }

@@ -81,6 +81,11 @@ Win32Exception::Win32Exception(const char *extraMsg)
 {
 }
 
+DownloadException::DownloadException(const char* extraMsg)
+    : std::runtime_error(GetWin32ErrorMessage(extraMsg, GetLastError()))
+{
+}
+
 
 /*--------------------------------------------------------------------------*
                                  Logging

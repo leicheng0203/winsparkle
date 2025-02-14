@@ -128,7 +128,7 @@ public:
     {
         CFile f (_wfopen(filename.c_str(), L"rb"));
         if (!f)
-            throw std::runtime_error(WideToAnsi(L"Failed to open file " + filename));
+            throw std::runtime_error(WideToAnsi(L"The update file is corrupted. Please try again."));
 
         const int BUF_SIZE = 8192;
         unsigned char buf[BUF_SIZE];
@@ -139,7 +139,7 @@ public:
         }
 
         if (ferror(f))
-            throw std::runtime_error(WideToAnsi(L"Failed to read file " + filename));
+            throw std::runtime_error(WideToAnsi(L"The update file is corrupted. Please try again."));
     }
 
     void sha1Val(unsigned char(&sha1)[SHA_DIGEST_LENGTH])
@@ -279,7 +279,7 @@ std::string Base64ToBin(const std::string &base64)
     }
 
     if (!ok)
-        throw std::runtime_error("Failed to decode base64 string");
+        throw std::runtime_error("Issuer verification failed. Please contact support.");
 
     return bin;
 }
