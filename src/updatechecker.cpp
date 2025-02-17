@@ -306,14 +306,14 @@ void UpdateChecker::PerformUpdateCheck(bool show_dialog)
 
         auto all = Appcast::Load(appcast_xml.data);
         
-        // Filter to match the minimum server version
-        const auto current_server_version = GetServerVersion();
-        all.erase(std::remove_if(all.begin(), all.end(), [current_server_version](const Appcast& appcast)
-            {
-                return CompareVersions(current_server_version, appcast.MinServerVersion) < 0;
-            }),
-            all.end()
-        );
+        // Todo Filter to match the minimum server version
+        //const auto current_server_version = GetServerVersion();
+        //all.erase(std::remove_if(all.begin(), all.end(), [current_server_version](const Appcast& appcast)
+        //    {
+        //        return CompareVersions(current_server_version, appcast.MinServerVersion) < 0;
+        //    }),
+        //    all.end()
+        //);
 
         if (all.empty())
         {
