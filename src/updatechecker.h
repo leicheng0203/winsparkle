@@ -67,7 +67,7 @@ protected:
     virtual bool ShouldAutomaticallyInstall() const { return false; }
 
 protected:
-    virtual void PerformUpdateCheck();
+    virtual void PerformUpdateCheck(bool show_dialog);
     virtual bool IsJoinable() const { return false; }
 };
 
@@ -84,7 +84,7 @@ protected:
 class OneShotUpdateChecker : public UpdateChecker
 {
 protected:
-    virtual void Run();
+    virtual void Run() override;
 };
 
 
@@ -98,6 +98,7 @@ public:
     ManualUpdateChecker() : OneShotUpdateChecker() {}
 
 protected:
+    virtual void Run() override;
     virtual bool ShouldSkipUpdate(const Appcast& appcast) const;
 };
 

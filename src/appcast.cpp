@@ -25,6 +25,7 @@
 
 #include "appcast.h"
 #include "error.h"
+#include "settings.h"
 
 #include <expat.h>
 #include <algorithm>
@@ -290,7 +291,7 @@ void XMLCALL OnStartElement(void *data, const char *name, const char **attrs)
                 const char* value = attrs[i + 1];
 
                 if (strcmp(name, ATTR_URL) == 0)
-                    enclosure.DownloadURL = value;
+                    enclosure.DownloadPath = value;
                 else if (strcmp(name, ATTR_DSASIGNATURE) == 0)
                     enclosure.DsaSignature = value;
                 else if (strcmp(name, ATTR_OS) == 0)
@@ -448,6 +449,19 @@ void XMLCALL OnText(void *data, const char *s, int len)
 /*--------------------------------------------------------------------------*
                                Appcast class
  *--------------------------------------------------------------------------*/
+
+bool Appcast::Enclosure::IsValid() const
+{
+    return !GetDownloadURL().empty();
+}
+
+std::string Appcast::Enclosure::GetDownloadURL() const
+{
+    // Todo move GetAvailableHost from OETHTray
+    std::string enroll_server;
+    Settings::ReadConfigValue("EnrollServer", enroll_server);
+    return enroll_server + DownloadPath;
+}
 
 std::vector<Appcast> Appcast::Load(const std::string& xml)
 {

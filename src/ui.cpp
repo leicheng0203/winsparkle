@@ -1541,18 +1541,20 @@ void UI::ShutDown()
 
 
 /*static*/
-void UI::NotifyNoUpdates(bool installAutomatically)
+void UI::NotifyNoUpdates(bool installAutomatically, bool show_dialog)
 {
-    UIThreadAccess uit;
+    if (show_dialog)
+    {
+        ApplicationController::NotifyUpdateNotFound();
+    }
 
+    UIThreadAccess uit;
     if ( !uit.IsRunning() )
         return;
 
     EventPayload payload;
     payload.installAutomatically = installAutomatically;
     uit.App().SendMsg(MSG_NO_UPDATE_FOUND, &payload);
-
-    ApplicationController::NotifyUpdateNotFound();
 }
 
 

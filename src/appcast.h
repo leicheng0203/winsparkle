@@ -66,7 +66,7 @@ struct Appcast
     struct Enclosure
     {
         /// URL of the update
-        std::string DownloadURL;
+        std::string DownloadPath;
 
         /// Signing signature of the update
         std::string DsaSignature;
@@ -77,7 +77,8 @@ struct Appcast
         // Arguments passed on the the updater executable
         std::string InstallerArguments;
 
-		bool IsValid() const { return !DownloadURL.empty(); }
+        bool IsValid() const;
+        std::string GetDownloadURL() const;
     };
 
 	Enclosure enclosure;

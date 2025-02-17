@@ -151,9 +151,9 @@ std::string GetServerVersion()
 {
     const auto kDefaultServerVersion = "2.1.2";
 
-    // Todo call GetAvailableHost or read from registry
-    //const auto kUrl = L"https://master.apps.oc.webcomm.com.tw/getVersion";
-    const auto kUrl = L"https://gcpdevcorp1.oeth-dev.webcomm.com.tw/getVersion";
+    // Todo move GetAvailableHost from OETHTray
+    const auto kUrl = L"https://master.apps.oc.webcomm.com.tw/getVersion";
+    //const auto kUrl = L"https://gcpdevcorp1.oeth-dev.webcomm.com.tw/getVersion";
     //const auto kUrl = L"https://oeth-uat.webcomm.com.tw/getVersion";
     //const auto kUrl = GetAvailableHost() + L"/getVersion";
     
@@ -292,7 +292,7 @@ UpdateChecker::UpdateChecker(): Thread("WinSparkle updates check")
 {
 }
 
-void UpdateChecker::PerformUpdateCheck()
+void UpdateChecker::PerformUpdateCheck(bool show_dialog)
 {
     try
     {
@@ -318,7 +318,7 @@ void UpdateChecker::PerformUpdateCheck()
         if (all.empty())
         {
             // No applicable updates in the feed.
-            UI::NotifyNoUpdates(ShouldAutomaticallyInstall());
+            UI::NotifyNoUpdates(ShouldAutomaticallyInstall(), show_dialog);
             return;
         }
 
@@ -339,8 +339,8 @@ void UpdateChecker::PerformUpdateCheck()
 
         if (!appcast.ReleaseNotesURL.empty())
             CheckForInsecureURL(appcast.ReleaseNotesURL, "release notes");
-        if (!appcast.enclosure.DownloadURL.empty())
-            CheckForInsecureURL(appcast.enclosure.DownloadURL, "update file");
+        if (!appcast.enclosure.GetDownloadURL().empty())
+            CheckForInsecureURL(appcast.enclosure.GetDownloadURL(), "update file");
 
         Settings::WriteConfigValue("LastCheckTime", time(NULL));
 
@@ -348,12 +348,12 @@ void UpdateChecker::PerformUpdateCheck()
         if ( !appcast.IsValid() || CompareVersions(currentVersion, appcast.Version) >= 0 )
         {
             // The same or newer version is already installed.
-            UI::NotifyNoUpdates(ShouldAutomaticallyInstall());
+            UI::NotifyNoUpdates(ShouldAutomaticallyInstall(), show_dialog);
             return;
         }
 
         // Check if the user opted to ignore this particular version.
-        if ( ShouldSkipUpdate(appcast) )
+        if ( ShouldSkipUpdate(appcast) && !show_dialog)
         {
             return;
         }
@@ -416,7 +416,7 @@ void PeriodicUpdateChecker::Run()
             time_t nextCheck = lastCheck + interval;
             if (currentTime >= nextCheck)
             {
-                PerformUpdateCheck();
+                PerformUpdateCheck(false);
                 sleepTimeInSeconds = interval;
             }
             else
@@ -435,13 +435,21 @@ void OneShotUpdateChecker::Run()
     // no initialization to do, so signal readiness immediately
     SignalReady();
 
-    PerformUpdateCheck();
+    PerformUpdateCheck(false);
 }
 
 
 /*--------------------------------------------------------------------------*
                             ManualUpdateChecker
  *--------------------------------------------------------------------------*/
+
+void ManualUpdateChecker::Run()
+{
+    // no initialization to do, so signal readiness immediately
+    SignalReady();
+
+    PerformUpdateCheck(true);
+}
 
 bool ManualUpdateChecker::ShouldSkipUpdate(const Appcast&) const
 {
