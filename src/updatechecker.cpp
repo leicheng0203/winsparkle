@@ -362,12 +362,20 @@ void UpdateChecker::PerformUpdateCheck(bool show_dialog)
     }
     catch (const DownloadException& ex)
     {
-        UI::NotifyUpdateError(Err_AppcastXmlUnavailable, ex.what());
+        if (show_dialog)
+        {
+            UI::NotifyUpdateError(Err_AppcastXmlUnavailable, ex.what());
+        }
+
         throw;
     }
     catch (const std::exception& ex)
     {
-        UI::NotifyUpdateError(Err_Generic, ex.what());
+        if (show_dialog)
+        {
+            UI::NotifyUpdateError(Err_Generic, ex.what());
+        }
+
         throw;
     }
     catch ( ... )
