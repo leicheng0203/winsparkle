@@ -66,7 +66,7 @@ struct Appcast
     struct Enclosure
     {
         /// URL of the update
-        std::string DownloadPath;
+        std::string DownloadURL;
 
         /// Signing signature of the update
         std::string DsaSignature;
@@ -78,7 +78,6 @@ struct Appcast
         std::string InstallerArguments;
 
         bool IsValid() const;
-        std::string GetDownloadURL() const;
     };
 
 	Enclosure enclosure;
@@ -106,6 +105,8 @@ struct Appcast
     /// If true, then download and install the update ourselves.
     /// If false, launch a web browser to WebBrowserURL.
     bool HasDownload() const { return enclosure.IsValid(); }
+
+    std::string GetDownloadURL() const;
 };
 
 } // namespace winsparkle

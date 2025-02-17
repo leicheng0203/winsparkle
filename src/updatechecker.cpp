@@ -339,8 +339,8 @@ void UpdateChecker::PerformUpdateCheck(bool show_dialog)
 
         if (!appcast.ReleaseNotesURL.empty())
             CheckForInsecureURL(appcast.ReleaseNotesURL, "release notes");
-        if (!appcast.enclosure.GetDownloadURL().empty())
-            CheckForInsecureURL(appcast.enclosure.GetDownloadURL(), "update file");
+        if (!appcast.GetDownloadURL().empty())
+            CheckForInsecureURL(appcast.GetDownloadURL(), "update file");
 
         Settings::WriteConfigValue("LastCheckTime", time(NULL));
 

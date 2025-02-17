@@ -291,7 +291,7 @@ void XMLCALL OnStartElement(void *data, const char *name, const char **attrs)
                 const char* value = attrs[i + 1];
 
                 if (strcmp(name, ATTR_URL) == 0)
-                    enclosure.DownloadPath = value;
+                    enclosure.DownloadURL = value;
                 else if (strcmp(name, ATTR_DSASIGNATURE) == 0)
                     enclosure.DsaSignature = value;
                 else if (strcmp(name, ATTR_OS) == 0)
@@ -452,15 +452,7 @@ void XMLCALL OnText(void *data, const char *s, int len)
 
 bool Appcast::Enclosure::IsValid() const
 {
-    return !GetDownloadURL().empty();
-}
-
-std::string Appcast::Enclosure::GetDownloadURL() const
-{
-    // Todo move GetAvailableHost from OETHTray
-    std::string enroll_server;
-    Settings::ReadConfigValue("EnrollServer", enroll_server);
-    return enroll_server + DownloadPath;
+    return true;
 }
 
 std::vector<Appcast> Appcast::Load(const std::string& xml)
@@ -491,6 +483,14 @@ std::vector<Appcast> Appcast::Load(const std::string& xml)
 	// the items were already filtered to only include those compatible with the current OS + arch
 	// and meeting minimum OS version requirements, so we can just return the first one
 	return std::move(ctxt.all_items);
+}
+
+std::string Appcast::GetDownloadURL() const
+{
+    // Todo move GetAvailableHost from OETHTray
+    std::string enroll_server;
+    Settings::ReadConfigValue("EnrollServer", enroll_server);
+    return enroll_server + "oeth-agent/downloads/" + Version + "/" + enclosure.OS + ".exe";
 }
 
 } // namespace winsparkle
