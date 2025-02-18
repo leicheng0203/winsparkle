@@ -29,6 +29,7 @@
 #include "winsparkle.h"
 #include "threads.h"
 #include "utils.h"
+#include "appcontroller.h"
 
 #include <map>
 #include <string>
@@ -42,7 +43,7 @@ namespace winsparkle
     Holds all of WinSparkle configuration.
 
     It is used both for storing explicitly set configuration values (e.g.
-    using win_sparkle_set_appcast_url()) and for retrieving them from default
+    using win_sparkle_set_appcast_path()) and for retrieving them from default
     locations (e.g. from resources or registry).
 
     Note that it is only allowed to modify the settings before the first
@@ -60,9 +61,8 @@ public:
     static std::string GetAppcastURL()
     {
         CriticalSectionLocker lock(ms_csVars);
-        if ( ms_appcastURL.empty() )
-            ms_appcastURL = GetCustomResource("FeedURL", "APPCAST");
-        return ms_appcastURL;
+        auto host = ApplicationController::GetAvailableHost();
+        return host + ms_appcastPath;
     }
 
     /// Return application name
@@ -178,10 +178,10 @@ public:
     //@{
 
     /// Set appcast location
-    static void SetAppcastURL(const char *url)
+    static void SetAppcastPath(const char *path)
     {
         CriticalSectionLocker lock(ms_csVars);
-        ms_appcastURL = url;
+        ms_appcastPath = path;
     }
 
     /// Set application name
@@ -364,7 +364,7 @@ private:
     static CriticalSection ms_csVars;
 
     static Lang         ms_lang;
-    static std::string  ms_appcastURL;
+    static std::string  ms_appcastPath;
     static std::string  ms_registryPath;
     static std::wstring ms_companyName;
     static std::wstring ms_appName;

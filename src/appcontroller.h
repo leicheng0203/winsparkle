@@ -86,12 +86,21 @@ public:
     /// Run the user installer callback if one is set.
     static int UserRunInstallerCallback(const wchar_t*, const char*);
 
+    static std::string GetAvailableHost();
+
     //@}
 
     /**
         Behavior customizations -- callbacks.
      */
     //@{
+
+    /// Set the win_sparkle_get_available_host_callback_t function
+    static void SetGetAvailableHostCallback(win_sparkle_get_available_host_callback_t callback)
+    {
+        CriticalSectionLocker lock(ms_csVars);
+        ms_cbGetAvailableHost = callback;
+    }
 
     /// Set the win_sparkle_error_callback_t function
     static void SetErrorCallback(win_sparkle_error_callback_t callback)
@@ -198,6 +207,7 @@ private:
     // guards the variables below:
     static CriticalSection ms_csVars;
 
+    static win_sparkle_get_available_host_callback_t  ms_cbGetAvailableHost;
     static win_sparkle_error_callback_t               ms_cbError;
     static win_sparkle_can_shutdown_callback_t        ms_cbIsReadyToShutdown;
     static win_sparkle_shutdown_request_callback_t    ms_cbRequestShutdown;

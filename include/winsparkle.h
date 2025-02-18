@@ -164,17 +164,17 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_langid(unsigned short lang);
     @note See https://github.com/vslavik/winsparkle/wiki/Appcast-Feeds for
           more information about appcast feeds.
  */
-WIN_SPARKLE_API void __cdecl win_sparkle_set_appcast_url(const char *url);
+WIN_SPARKLE_API void __cdecl win_sparkle_set_appcast_path(const char *url);
+
+/// Callback type for win_sparkle_get_available_host_callback_t()
+typedef const char*(__cdecl* win_sparkle_get_available_host_callback_t)();
 
 /**
-    @note  read appcast url from registry and then set appcast url.
- */
-WIN_SPARKLE_API void __cdecl win_sparkle_read_registry_and_set_appcast_url();
+    Set a callback to be called when an available host needs to be retrieved.
 
-/**
-    @return  true if the registry already has an Appcast URL.
- */
-WIN_SPARKLE_API bool __cdecl win_sparkle_has_appcast_url();
+    @since 0.5
+*/
+WIN_SPARKLE_API void __cdecl win_sparkle_set_get_available_host_callback(win_sparkle_get_available_host_callback_t callback);
 
 /**
     Sets DSA public key.

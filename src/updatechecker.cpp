@@ -31,6 +31,7 @@
 #include "settings.h"
 #include "download.h"
 #include "utils.h"
+#include "appcontroller.h"
 
 #include <ctime>
 #include <vector>
@@ -147,17 +148,33 @@ std::string HttpGetWinINet(const std::wstring& url)
     return response;
 }
 
+std::wstring ToWString(const std::string& str)
+{
+    const auto count = MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, nullptr, 0);
+    if (count == 0)
+    {
+        return {};
+    }
+
+    std::wstring wstr(count, L'\0');
+    if (0 == MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, &wstr[0], count))
+    {
+        return {};
+    }
+
+    wstr.resize(wstr.size() - 1);
+    return wstr;
+}
+
 std::string GetServerVersion()
 {
+    // Todo check impl
     const auto kDefaultServerVersion = "2.1.2";
 
-    // Todo move GetAvailableHost from OETHTray
-    const auto kUrl = L"https://master.apps.oc.webcomm.com.tw/getVersion";
-    //const auto kUrl = L"https://gcpdevcorp1.oeth-dev.webcomm.com.tw/getVersion";
-    //const auto kUrl = L"https://oeth-uat.webcomm.com.tw/getVersion";
-    //const auto kUrl = GetAvailableHost() + L"/getVersion";
+    const auto host = ApplicationController::GetAvailableHost();
+    const auto url = host + "/getVersion";
     
-    const auto json_response = HttpGetWinINet(kUrl);
+    const auto json_response = HttpGetWinINet(ToWString(url));
     if (json_response.empty())
     {
         return kDefaultServerVersion;

@@ -31,6 +31,7 @@ namespace winsparkle
 
 CriticalSection ApplicationController::ms_csVars;
 
+win_sparkle_get_available_host_callback_t  ApplicationController::ms_cbGetAvailableHost = NULL;
 win_sparkle_error_callback_t               ApplicationController::ms_cbError = NULL;
 win_sparkle_can_shutdown_callback_t        ApplicationController::ms_cbIsReadyToShutdown = NULL;
 win_sparkle_shutdown_request_callback_t    ApplicationController::ms_cbRequestShutdown = NULL;
@@ -214,6 +215,17 @@ int ApplicationController::UserRunInstallerCallback(const wchar_t* filePath, con
         return false;
 
     return ms_cbUserRunInstaller(filePath, installer_arguments);
+}
+
+std::string ApplicationController::GetAvailableHost()
+{
+    {
+        CriticalSectionLocker lock(ms_csVars);
+        if (ms_cbGetAvailableHost)
+        {
+            return (*ms_cbGetAvailableHost)();
+        }
+    }
 }
 
 } // namespace winsparkle

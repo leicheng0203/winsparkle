@@ -140,38 +140,20 @@ WIN_SPARKLE_API void __cdecl win_sparkle_set_langid(unsigned short lang)
                                Configuration
  *--------------------------------------------------------------------------*/
 
-WIN_SPARKLE_API void __cdecl win_sparkle_set_appcast_url(const char *url)
+WIN_SPARKLE_API void __cdecl win_sparkle_set_appcast_path(const char *url)
 {
     try
     {
-        CheckForInsecureURL(url, "appcast feed");
-        Settings::SetAppcastURL(url);
-        Settings::WriteConfigValue("AppcastURL", url);
+        Settings::SetAppcastPath(url);
     }
     CATCH_ALL_EXCEPTIONS
 }
 
-WIN_SPARKLE_API void __cdecl win_sparkle_read_registry_and_set_appcast_url()
+WIN_SPARKLE_API void __cdecl win_sparkle_set_get_available_host_callback(win_sparkle_get_available_host_callback_t callback)
 {
     try
     {
-        std::string appcast_url;
-        Settings::ReadConfigValue("AppcastURL", appcast_url);
-        if (!appcast_url.empty())
-        {
-            win_sparkle_set_appcast_url(appcast_url.c_str());
-        }
-    }
-    CATCH_ALL_EXCEPTIONS
-}
-
-WIN_SPARKLE_API bool __cdecl win_sparkle_has_appcast_url()
-{
-    try
-    {
-        std::string appcast_url;
-        Settings::ReadConfigValue("AppcastURL", appcast_url);
-        return !appcast_url.empty();
+        ApplicationController::SetGetAvailableHostCallback(callback);
     }
     CATCH_ALL_EXCEPTIONS
 }

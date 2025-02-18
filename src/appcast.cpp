@@ -26,6 +26,7 @@
 #include "appcast.h"
 #include "error.h"
 #include "settings.h"
+#include "appcontroller.h"
 
 #include <expat.h>
 #include <algorithm>
@@ -487,10 +488,9 @@ std::vector<Appcast> Appcast::Load(const std::string& xml)
 
 std::string Appcast::GetDownloadURL() const
 {
-    // Todo move GetAvailableHost from OETHTray
-    std::string enroll_server;
-    Settings::ReadConfigValue("EnrollServer", enroll_server);
-    return enroll_server + "oeth-agent/downloads/" + Version + "/" + enclosure.OS + ".exe";
+    auto host = ApplicationController::GetAvailableHost();
+    auto url = host + "oeth-agent/downloads/" + Version + "/" + enclosure.OS + ".exe";
+    return url;
 }
 
 } // namespace winsparkle
