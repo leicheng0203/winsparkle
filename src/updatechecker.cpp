@@ -166,45 +166,68 @@ std::wstring ToWString(const std::string& str)
     return wstr;
 }
 
+std::string ParseGetVersionResponseJSON(const std::string& json, const std::string& key)
+{
+    auto start = json.find(key);
+    if (start == std::string::npos)
+    {
+        return "";
+    }
+
+    start = json.find(":", start);
+    if (start == std::string::npos)
+    {
+        return "";
+    }
+
+    start = json.find("\"", start);
+    if (start == std::string::npos)
+    {
+        return "";
+    }
+
+    const auto end = json.find("\"", start + 1);
+    if (end == std::string::npos)
+    {
+        return "";
+    }
+
+    return json.substr(start + 1, end - start - 1);
+}
+
 std::string GetServerVersion()
 {
-    // Todo check impl
-    const auto kDefaultServerVersion = "2.1.2";
-
     const auto host = ApplicationController::GetAvailableHost();
     const auto url = host + "/getVersion";
     
     const auto json_response = HttpGetWinINet(ToWString(url));
     if (json_response.empty())
     {
-        return kDefaultServerVersion;
+        return "";
     }
 
-    auto start = json_response.find("\"oethServerVersion\"");
-    if (start == std::string::npos)
+    auto value = ParseGetVersionResponseJSON(json_response, "oethServerVersion");
+    if (!value.empty())
     {
-        return kDefaultServerVersion;
+        return value;
     }
 
-    start = json_response.find(":", start);
-    if (start == std::string::npos)
+    value = ParseGetVersionResponseJSON(json_response, "error_msg");
+    if (!value.empty())
     {
-        return kDefaultServerVersion;
+        auto start = value.find("404");
+        if (start != std::string::npos)
+        {
+            const auto kDefaultServerVersion = "2.1.2";
+            return kDefaultServerVersion;
+        }
+        else
+        {
+            return "";
+        }
     }
 
-    start = json_response.find("\"", start);
-    if (start == std::string::npos)
-    {
-        return kDefaultServerVersion;
-    }
-
-    const auto end = json_response.find("\"", start + 1);
-    if (end == std::string::npos)
-    {
-        return kDefaultServerVersion;
-    }
-
-    return json_response.substr(start + 1, end - start - 1);
+    return "";
 }
 
 } // anonymous namespace
@@ -323,14 +346,14 @@ void UpdateChecker::PerformUpdateCheck(bool show_dialog)
 
         auto all = Appcast::Load(appcast_xml.data);
         
-        // Todo Filter to match the minimum server version
-        //const auto current_server_version = GetServerVersion();
-        //all.erase(std::remove_if(all.begin(), all.end(), [current_server_version](const Appcast& appcast)
-        //    {
-        //        return CompareVersions(current_server_version, appcast.MinServerVersion) < 0;
-        //    }),
-        //    all.end()
-        //);
+        // Filter to match the minimum server version
+        const auto current_server_version = GetServerVersion();
+        all.erase(std::remove_if(all.begin(), all.end(), [current_server_version](const Appcast& appcast)
+            {
+                return CompareVersions(current_server_version, appcast.MinServerVersion) < 0;
+            }),
+            all.end()
+        );
 
         if (all.empty())
         {
