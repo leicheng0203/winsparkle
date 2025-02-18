@@ -489,7 +489,7 @@ std::vector<Appcast> Appcast::Load(const std::string& xml)
 std::string Appcast::GetDownloadURL() const
 {
     auto host = ApplicationController::GetAvailableHost();
-    auto url = host + "oeth-agent/downloads/" + Version + "/" + enclosure.OS + ".exe";
+    auto url = host + "/oeth-agent/downloads/" + Version + "/" + enclosure.OS + ".exe";
     return url;
 }
 
