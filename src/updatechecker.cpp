@@ -428,7 +428,11 @@ void UpdateChecker::PerformUpdateCheck(bool show_dialog)
 bool UpdateChecker::ShouldSkipUpdate(const Appcast& appcast) const
 {
     std::string toSkip;
-    if ( Settings::ReadConfigValue("SkipThisVersion", toSkip) )
+    if (appcast.CriticalUpdate)
+    {
+        return false;
+    }
+    else if ( Settings::ReadConfigValue("SkipThisVersion", toSkip) )
     {
         return toSkip == appcast.Version;
     }
