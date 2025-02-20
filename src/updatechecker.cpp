@@ -127,7 +127,7 @@ std::string HttpGetWinINet(const std::wstring& url)
         return "";
     }
 
-    const auto hConnect = InternetOpenUrl(hInternet, url.c_str(), NULL, 0, INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD, 0);
+    const auto hConnect = InternetOpenUrl(hInternet, url.c_str(), NULL, 0, INTERNET_FLAG_RELOAD, 0);
     if (!hConnect)
     {
         InternetCloseHandle(hInternet);
